@@ -11,6 +11,7 @@ Design phase. No hardware committed yet.
 
 ## Documentation
 
-- [Design Considerations](docs/design-considerations.md) — what to think about
-  before buying anything: sensing, calibration, networking, mains-side safety,
-  control logic, failure modes, budget, and a phased rollout plan.
+- [Design Considerations](docs/design-considerations.md) — part 1: sensing, calibration,
+  networking, mains-side safety, control logic, failure modes, budget, phasing.
+- [Sensor Node Build Spec](docs/sensor-node-spec.md) — part 2: board shortlist,
+  bill of materials, ESPHome firmware, and the five-test bring-up plan.
