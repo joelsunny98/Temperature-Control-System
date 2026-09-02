@@ -23,9 +23,28 @@ schematic step absorb effort that belongs in the test plan (§8).
 
 ## 2. Board shortlist
 
-One question decides this, and it can only be answered inside the building:
-does the radio hold a solid link from all twelve positions, through whatever
-the hall is built from?
+**"ESP32-C3" is a chip, not a brand.** Any board with those words on it or in
+its listing — Seeed's XIAO, a no-name "SuperMini," anything else — has the
+identical Espressif chip inside. Boards differ in antenna, size, and build
+quality, not the fundamentals. Shop for the chip name, not a specific SKU.
+
+Why this chip and not another ESP32 variant: the original ESP32 and the S3 are
+dual-core with more RAM, aimed at heavier workloads (camera/AI on the S3) —
+overkill and pricier for reading one sensor and publishing over WiFi. The C6
+adds a Zigbee/Thread radio on top of C3 — a hedge worth paying for only if
+WiFi actually fails the survey below, not by default. C3 is the cheapest
+Espressif chip with solid modern WiFi, which is all this job needs.
+
+**If your shop has ESP8266 boards instead** (Wemos D1 Mini, NodeMCU) — a
+different, older Espressif family, WiFi-only, no Bluetooth — that's a
+legitimate substitute if it's cheaper or easier to find locally. It works
+fine for a mains-powered node reading one sensor; the only place it's weaker
+is deep-sleep battery life, which doesn't apply here. Say so and the firmware
+`board:` line changes by one word.
+
+One question decides between the C3 candidates below, and it can only be
+answered inside the building: does the radio hold a solid link from all
+twelve positions, through whatever the hall is built from?
 
 | Board | ≈ Price (India) | Antenna | I²C connector | Why it's on the list |
 |---|---|---|---|---|
@@ -45,14 +64,24 @@ what tells you the clone isn't good enough before you've bought 12 of them.
 
 ## 3. Sensor choice
 
-Two families, for different jobs. Don't pick one for everything.
+**Same principle as the board: buy the chip, not a specific listing.** SHT31
+and SHT40 are both Sensirion (Swiss sensor maker) chips, same ±0.2 °C accuracy
+tier — SHT3x (30/31/35) is the older generation, SHT4x (40/41/45) the newer
+one, generally cheaper today since it's the current design. Functionally
+interchangeable here. Any breakout board carrying either — Adafruit,
+Sparkfun, or a generic "GY-SHT40"/"GY-SHT31" board (`GY-` is just a generic
+prefix Chinese breakout makers use, not a brand — same chip, no premium
+extras) — is fine. Ask your shop for "SHT31 or SHT40, whichever you have."
+
+Two families beyond that, for different jobs. Don't pick one for everything.
 
 | Part | Accuracy | Bus | ≈ Price (India) | Use it for |
 |---|---|---|---|---|
-| **GY-SHT40 module** ← lead | ±0.2 °C | I²C | ₹250 | The occupied-zone grid. Same chip family as the pricier Adafruit SHT45 breakout at roughly a third the cost — the extra ±0.1 °C precision on SHT45 doesn't matter once cross-calibration (§8, test 4) is done anyway. |
-| Adafruit SHT45 breakout | ±0.1 °C | I²C | ₹700–900 | Skip for the cost-sensitive build — the precision isn't worth 3× the price here. |
+| **SHT31 or SHT40 breakout** ← lead, either | ±0.2 °C | I²C | ₹200–350 | The occupied-zone grid. Whichever your shop stocks — see above, they're interchangeable here. |
+| Adafruit SHT45 breakout | ±0.1 °C | I²C | ₹700–900 | Skip for the cost-sensitive build — the extra precision doesn't matter once cross-calibration (§8, test 4) is done, and it's 3× the price. |
 | **DS18B20** stainless probe, 1–3 m lead | ±0.5 °C | 1-Wire | ₹80–150 | AC supply-air probes, and the ceiling leg of a column node. The cable length is the point, not the accuracy. |
-| BME280 | ±0.5 °C | I²C | ₹150–200 | Skip regardless of cost — worse temperature accuracy than the SHT4x family, and its pressure channel is useless here. |
+| BME280 | ±0.5 °C | I²C | ₹150–200 | Skip — worse accuracy than SHT31/40, and its pressure channel is useless here. See the explanation of why this matters for a differential measurement, above in chat / project history. |
+| DHT11 / DHT22 | ±0.5–2 °C | Single-wire (not I²C) | ₹80–150 | **Avoid, despite being everywhere and cheap.** Worse accuracy than even BME280, slow to respond, and not I²C — wrong tool for resolving 2–3 °C gradients between zones. |
 
 ### Why DS18B20 for the long runs
 
@@ -62,7 +91,7 @@ intermittently in ways that cost you a weekend. **1-Wire is built for long cable
 runs**: tens of metres, several devices per bus.
 
 So a *column node* — the thing that measures your stratification ΔT — is one
-ESP32 with a GY-SHT40 on a short cable at head height and a DS18B20 on a 2–3 m
+ESP32 with a SHT31/SHT40 on a short cable at head height and a DS18B20 on a 2–3 m
 cable run up to the ceiling. Both sensors share one node, one clock, and one
 calibration session, which is exactly what you want when the quantity of
 interest is the difference between them.
@@ -108,7 +137,7 @@ always, since the enclosure's own plume rises.
 Four wires for the I²C sensor, three for the DS18B20. Both the XIAO ESP32C3 and
 the SuperMini clone need everything soldered — neither has a plug-in connector.
 
-| GY-SHT40 module | ESP32-C3 pin | Note |
+| SHT31/SHT40 breakout | ESP32-C3 pin | Note |
 |---|---|---|
 | VCC (may be labeled VIN) | 3V3 | — |
 | GND | GND | — |
@@ -121,7 +150,7 @@ the SuperMini clone need everything soldered — neither has a plug-in connector
 | Black | GND | — |
 | Yellow (data) | GPIO4 (XIAO: pin D2) | **4.7 kΩ pull-up from data to 3V3.** Required — it will not work without it. |
 
-Most GY-SHT40 boards already carry their own I²C pull-up resistors, so don't
+Most SHT31/SHT40 breakouts already carry their own I²C pull-up resistors, so don't
 add more. Daisy-chaining several I²C devices puts pull-ups in parallel and can
 leave the bus too stiff to pull low — one more reason one sensor per bus is
 the easy life.
@@ -152,7 +181,7 @@ question that decides whether you build the remaining 10 nodes at ₹450 or
 |---|---|---|
 | Seeed XIAO ESP32C3 ×1 | [Robu.in](https://robu.in/product/seeed-studio-xiao-esp32c3-tiny-mcu-board-with-wi-fi-and-ble-battery-charge-supported-power-efficiency-and-rich-interface/), also on [Amazon.in](https://www.amazon.in/Seeed-Studio-XIAO-ESP32C3-Microcontroller/dp/B0B94JZ2YF) | ~₹400–500. Confirm the listing shows the u.FL + external antenna variant, not a ceramic-only one. |
 | ESP32-C3 SuperMini clone ×1 | [Robu.in](https://robu.in/product/esp32-c3-supermini-expansion-board/) or Amazon.in (several sellers — "ESP32-C3 Super Mini") | ~₹150–200, varies by seller. This is the one under test — don't buy 10 more until §8 test 2 passes. |
-| GY-SHT40 module ×2 | Robu.in / Robocraze — search "GY-SHT40" | ~₹250 each. One per board. |
+| SHT31 or SHT40 breakout ×2 | Robu.in / Robocraze, or a local electronics shop — ask for either chip name | ~₹200–350 each. One per board — either is fine, see §3. |
 | DS18B20 waterproof probe, 1 m ×2–3 | [Robokits](https://robokits.co.in/sensors/temperature-humidity/ds18b20-temperature-sensor-probe-waterproof-1-meter-length) (~₹83) or [Robocraze](https://robocraze.com/products/ds18b20-waterproof-temperature-sensor-probe-1m-range-7semi) | Cheap enough to grab spares now. |
 | 4.7 kΩ resistor | Any local electronics shop / Robu.in | For the DS18B20 pull-up (§5), one per board. |
 | USB-C cable + 5V supply ×2 | Local | Any phone charger works for bench testing. |
