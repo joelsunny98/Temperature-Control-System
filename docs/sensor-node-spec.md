@@ -152,6 +152,26 @@ You don't need the Pi to start — ESPHome will log to a laptop running Mosquitt
 When you do buy it: Raspberry Pi 5 (4 GB), active cooler, official 27 W supply,
 and **an SSD rather than an SD card**. Roughly $150–200 all in.
 
+### India sourcing — node #1 only
+
+Per project-context.md: solder-capable, no fixed budget, source locally. Don't
+order all three board variants yet — build **one** node first, per the phase
+plan, and only order the RF-comparison variants (§8, test 2) if this one's
+WiFi turns out shaky in the hall.
+
+| Item | Where | Notes |
+|---|---|---|
+| Seeed XIAO ESP32C3 | [Robu.in](https://robu.in/product/seeed-studio-xiao-esp32c3-tiny-mcu-board-with-wi-fi-and-ble-battery-charge-supported-power-efficiency-and-rich-interface/), also on [Amazon.in](https://www.amazon.in/Seeed-Studio-XIAO-ESP32C3-Microcontroller/dp/B0B94JZ2YF) | ~₹400–500. Confirm the listing shows the u.FL + external antenna variant, not a ceramic-only one. |
+| SHT45 breakout | [Robu.in](https://robu.in/product/adafruit-sensirion-sht45-precision-temperature-humidity-sensor/) (Adafruit, STEMMA QT) or [Robocraze](https://robocraze.com/products/7semi-sht45-humidity-temperature-sensor-breakout-board-with-4-pin-connector) (7Semi, JST) | Either works — you're soldering anyway, so the connector type doesn't matter; wire directly to the breakout's pin pads. |
+| DS18B20 waterproof probe, 1 m | [Robokits](https://robokits.co.in/sensors/temperature-humidity/ds18b20-temperature-sensor-probe-waterproof-1-meter-length) (~₹83) or [Robocraze](https://robocraze.com/products/ds18b20-waterproof-temperature-sensor-probe-1m-range-7semi) | Cheap enough to grab 2–3 even for one node — you'll want spares. |
+| 4.7 kΩ resistor | Any local electronics shop / Robu.in | For the DS18B20 pull-up (§5). |
+| USB-C cable + 5V supply | Local | Any phone charger works for bench testing. |
+| Reference thermometer, ±0.1 °C or better | Local instrument shop / Amazon.in | For §8 test 4 later — not needed for the first bring-up test. |
+
+Skip for node #1 (needed later, for the full 3-node comparison or the
+12-node build): the QT Py, the XIAO ESP32C6, enclosures, and the vented
+shield — get one node talking over MQTT first.
+
 ---
 
 ## 7. Firmware
