@@ -199,6 +199,26 @@ phone. During bring-up (§8 test 1), the USB cable to your laptop powers *and*
 flashes it — no separate supply needed yet. Once it's a permanent install,
 that becomes a USB wall adapter instead of a laptop; nothing else changes.
 
+### Battery power for chair nodes (build after node #1, not instead of it)
+
+The real deployment is battery-powered with a manual switch — see
+project-context.md's Decisions section for why (chairs move, and the ~3–4
+hour/week usage pattern means a switch does the job of software sleep with
+none of the firmware work). Get node #1 working on USB first, then build
+this as the next thing, not simultaneously.
+
+Circuit, in order: **LiPo cell → charge/boost module → SPST switch →
+board's USB-C/5V input.**
+
+| Part | Notes |
+|---|---|
+| Single-cell LiPo, ~2000 mAh | Sized for roughly 3–4 services (12–16 hours) between recharges at an estimated 80–150 mA draw. Confirm actual draw with a USB power meter once built and adjust — this is a ballpark, not a measurement. |
+| **Charge + boost module** (not a bare TP4056) | Must output a regulated, steady 5V regardless of battery charge level — a LiPo's voltage swings 4.2V→3.0V across its discharge, and a bare TP4056 only manages charging, it doesn't regulate that swing. Sold as "TP4056 with boost converter" or similar. Feeding raw unregulated battery voltage into the SuperMini's 5V/VIN pin risks brownout near end-of-discharge or exceeding headroom near full charge — the regulated module sidesteps needing to know anything about this specific clone board's onboard regulator. **Stays connected to the battery at all times** (via its own USB-C input), so charging works whenever it's plugged in, whether the switch is on or off. |
+| SPST slide switch | Wired in series **between the module's regulated 5V output and the board** — not between the battery and the module. This way the switch controls only whether the board is powered, and charging is never gated by switch position (you can leave it charging overnight without it needing to be "on"). Off means the board sees zero power — not standby. |
+
+No firmware changes needed — `power_save_mode: none` in §7 stays as-is,
+since the switch (not software) is what saves battery here.
+
 ---
 
 ## 6. Bill of materials

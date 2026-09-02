@@ -44,24 +44,32 @@ before proposing anything — it changes what's "sensible" to recommend.
   thermometer at the AC vent settles it if a zone underperforms. `sensor-
   node-spec.md` retains the ceiling/column-node design for reference; it is
   not currently being built.
-- **Chair nodes will be battery-powered, not USB (2026-09).** Follows from
-  the chair-mount decision above — a chair that gets stacked and moved was
-  never going to stay wall-plugged, so battery is the coherent choice here,
-  not a compromise. Not yet implemented: node #1 stays on USB power for
-  bring-up (proving the sensor/firmware works is one variable at a time, not
-  two). Two things battery power requires before it's real, not just "add a
-  battery": (1) a physical battery — a small USB power bank inside the
-  enclosure is the simple starting point, no circuit design needed; a bare
-  LiPo + charging module is more compact but only works if the specific
-  board variant has a battery input, check before buying; (2) firmware
-  changes — the current config keeps WiFi connected continuously
-  (`power_save_mode: none`, written for mains power), which will drain a
-  small battery in under a day. Real battery life needs a sleep-sample-wake
-  cycle, not implemented yet. Also flagging the operational cost plainly:
-  12 units each needing an unscheduled recharge/swap is the kind of thing
-  design-considerations.md warned quietly stops happening in a
-  volunteer-run building — worth a simple habit (check batteries when
-  chairs get set up) rather than assuming it'll just get done.
+- **Chair nodes are battery-powered with a manual on/off switch (settled
+  2026-09).** Follows from the chair-mount decision above — a chair that
+  gets stacked and moved was never going to stay wall-plugged. Usage pattern
+  turned out to make this simple: nodes only need to run during services,
+  roughly 3–4 hours/week, manually switched on and off by hand. **This
+  removes the deep-sleep firmware requirement entirely** — a physical SPST
+  switch in series with the battery gives zero draw when off, which does the
+  same job as software sleep for this usage pattern, with no firmware
+  changes needed. (Superseded the original plan here, which assumed
+  continuous unattended operation and would have needed a sleep-sample-wake
+  firmware cycle — not needed given how this is actually used.)
+
+  Circuit, three parts: LiPo cell (single-cell, ~2000 mAh sized for a few
+  services between recharges) → a combined charge-and-boost module (not a
+  bare TP4056 — needs to output a regulated steady 5V regardless of battery
+  level, since raw LiPo voltage swings 4.2V→3.0V across discharge and a
+  clone board's onboard regulator headroom can't be assumed) → SPST switch
+  → board's USB-C/5V input. sensor-node-spec.md doesn't have this yet as of
+  this note — wiring/BOM currently only reflects USB-powered node #1.
+
+  Still true: node #1 (bring-up/firmware validation) stays on USB power
+  first — this battery circuit is being built as the *next* node, not
+  swapped into node #1 mid-test. Operational note still applies: even with
+  infrequent recharging, someone needs a habit of checking/charging before
+  service, or design-considerations.md's "quietly stops happening in a
+  volunteer-run building" risk still applies, just on a longer cycle.
 
 ## Working style
 
