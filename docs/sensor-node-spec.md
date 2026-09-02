@@ -96,6 +96,18 @@ cable run up to the ceiling. Both sensors share one node, one clock, and one
 calibration session, which is exactly what you want when the quantity of
 interest is the difference between them.
 
+**This only works for a fixed wall/column mount.** It assumes the enclosure
+sits still while a cable runs up to a fixed ceiling point — it does not work
+for a chair-attached unit, since the chair moves (this hall's chairs get
+stacked and rearranged) and a tethered ceiling cable can't move with it. For
+a chair-mounted design: skip the column node entirely. Build two *independent*
+single-sensor nodes instead — same ESP32-C3 + SHT31 hardware, no DS18B20, no
+cable between them — one clipped to the chair at occupied-zone height, one
+mounted separately and permanently near the ceiling. Each publishes its own
+reading over WiFi; the ceiling-minus-occupied-zone difference is computed
+later, in software, from the two independent readings — not measured by
+either device itself.
+
 ---
 
 ## 4. Node layout — get the sensor off the board

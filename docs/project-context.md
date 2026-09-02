@@ -11,9 +11,14 @@ before proposing anything — it changes what's "sensible" to recommend.
 - **Has a 3D printer.** Custom enclosures are in scope, not just off-the-shelf
   project boxes. Notably: sensor housings designed to integrate into the
   hall's chairs, rather than sit on walls/columns as separate visible units.
-  Worth revisiting the sensor-layout recommendation in
-  `sensor-node-spec.md` §4 with chair-integrated mounting in mind — that
-  changes the enclosure brief and possibly the height/position assumptions.
+  **Constraint this creates (settled 2026-09):** a chair-mounted enclosure can
+  only be a self-contained, single-sensor, single-MCU occupied-zone node — it
+  cannot also carry the ceiling/stratification sensor, because the chairs get
+  stacked and moved and a cable tethering a chair to a fixed ceiling point
+  doesn't survive that. Stratification is measured by a *second, independent*
+  node (identical hardware, no DS18B20 needed) mounted separately and
+  permanently near the ceiling, never on a chair. See
+  `sensor-node-spec.md` §3.
 - **Location: India.** Source parts locally where possible (Robu, Robocraze,
   Amazon.in, etc.) rather than assuming US suppliers/prices. Component
   availability and pricing should be re-checked against Indian sourcing, not
