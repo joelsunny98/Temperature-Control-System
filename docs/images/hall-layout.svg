@@ -2,18 +2,15 @@
   <rect width="1080" height="700" fill="#ffffff"/>
 
   <defs>
-    <marker id="fanhub" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="1" markerHeight="1">
-      <circle cx="5" cy="5" r="2" fill="#16202B"/>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <polygon points="0,0.5 9,5 0,9.5" fill="#16202B"/>
     </marker>
   </defs>
 
-  <!-- ============ SEATING ZONES (drawn first, under everything) ============ -->
-  <!-- full corner pockets -->
+  <!-- ============ SEATING ZONES ============ -->
   <rect x="150" y="90"  width="150" height="110" rx="18" fill="#C0561C" fill-opacity="0.16" stroke="#C0561C" stroke-opacity="0.5" stroke-width="1.5"/>
   <rect x="770" y="90"  width="150" height="110" rx="18" fill="#C0561C" fill-opacity="0.16" stroke="#C0561C" stroke-opacity="0.5" stroke-width="1.5"/>
-  <!-- large center block, full height -->
   <rect x="360" y="90" width="350" height="440" rx="18" fill="#C0561C" fill-opacity="0.16" stroke="#C0561C" stroke-opacity="0.5" stroke-width="1.5"/>
-  <!-- side pockets, tapering toward the doors (lighter near the bottom) -->
   <rect x="150" y="230" width="150" height="150" rx="18" fill="#C0561C" fill-opacity="0.16" stroke="#C0561C" stroke-opacity="0.5" stroke-width="1.5"/>
   <rect x="150" y="390" width="150" height="110" rx="18" fill="#C0561C" fill-opacity="0.07" stroke="#C0561C" stroke-opacity="0.3" stroke-width="1.5" stroke-dasharray="5 4"/>
   <rect x="770" y="230" width="150" height="150" rx="18" fill="#C0561C" fill-opacity="0.16" stroke="#C0561C" stroke-opacity="0.5" stroke-width="1.5"/>
@@ -25,45 +22,50 @@
   <text x="540" y="42" text-anchor="middle" font-size="17" font-weight="700" fill="#16202B" letter-spacing="1">FRONT OF THE HALL</text>
   <text x="540" y="592" text-anchor="middle" font-size="17" font-weight="700" fill="#16202B" letter-spacing="1">ENTRANCE / DOORS</text>
 
-  <!-- ============ FANS: 4 columns x 3 rows = 12 ============ -->
-  <!-- columns at x = 225, 435, 645, 845 ; rows at y = 145, 305, 460 -->
-  <g stroke="#16202B" stroke-width="2" fill="none">
-    <!-- helper: draw a fan glyph (circle + 4 blade ticks) at cx,cy with label n -->
+  <!-- ============ PULPIT ============ -->
+  <rect x="500" y="61" width="80" height="14" fill="#16202B"/>
+  <text x="540" y="94" text-anchor="middle" font-size="11" font-weight="700" fill="#16202B" letter-spacing="0.5">PULPIT</text>
+
+  <!-- ============ FACING ARROWS — every seating zone turns toward the pulpit ============ -->
+  <g stroke="#16202B" stroke-width="2" marker-end="url(#arrow)">
+    <line x1="262" y1="141" x2="288" y2="132"/>                          <!-- left-top,    θ=-12.5° -->
+    <line x1="256" y1="286" x2="279" y2="266"/>                          <!-- left-mid,    θ=-36°   -->
+    <line x1="252" y1="418" x2="267" y2="393"/>                          <!-- left-bottom, θ=-50°   -->
+    <line x1="808" y1="141" x2="782" y2="132"/>                          <!-- right-top,   θ=-167°  -->
+    <line x1="814" y1="286" x2="791" y2="266"/>                          <!-- right-mid,   θ=-143°  -->
+    <line x1="818" y1="418" x2="803" y2="393"/>                          <!-- right-bottom,θ=-129°  -->
+    <line x1="535" y1="128" x2="535" y2="102"/>                          <!-- center, front row -->
+    <line x1="535" y1="428" x2="535" y2="402"/>                          <!-- center, back row -->
   </g>
 
-  <!-- row 1 -->
-  <g id="fan-glyphs" font-size="13" fill="#16202B">
-    <!-- F1 -->
-    <g transform="translate(225,145)"><circle r="17" fill="#fff" stroke="#16202B" stroke-width="2"/><path d="M0,-17 L0,17 M-17,0 L17,0 M-12,-12 L12,12 M-12,12 L12,-12" stroke="#16202B" stroke-width="1.2"/><text y="34" text-anchor="middle" font-weight="600">F1</text></g>
-    <!-- F2 -->
-    <g transform="translate(485,145)"><circle r="17" fill="#fff" stroke="#16202B" stroke-width="2"/><path d="M0,-17 L0,17 M-17,0 L17,0 M-12,-12 L12,12 M-12,12 L12,-12" stroke="#16202B" stroke-width="1.2"/><text y="34" text-anchor="middle" font-weight="600">F2</text></g>
-    <!-- F3 -->
-    <g transform="translate(585,145)"><circle r="17" fill="#fff" stroke="#16202B" stroke-width="2"/><path d="M0,-17 L0,17 M-17,0 L17,0 M-12,-12 L12,12 M-12,12 L12,-12" stroke="#16202B" stroke-width="1.2"/><text y="34" text-anchor="middle" font-weight="600">F3</text></g>
-    <!-- F4 -->
-    <g transform="translate(845,145)"><circle r="17" fill="#fff" stroke="#16202B" stroke-width="2"/><path d="M0,-17 L0,17 M-17,0 L17,0 M-12,-12 L12,12 M-12,12 L12,-12" stroke="#16202B" stroke-width="1.2"/><text y="34" text-anchor="middle" font-weight="600">F4</text></g>
+  <!-- ============ FANS: 12, labeled by their switchboard number ============ -->
+  <g font-size="15" fill="#16202B">
+    <!-- row 1 -->
+    <g transform="translate(225,145)"><circle r="17" fill="#fff" stroke="#16202B" stroke-width="2"/><path d="M0,-17 L0,17 M-17,0 L17,0 M-12,-12 L12,12 M-12,12 L12,-12" stroke="#16202B" stroke-width="1.2"/><text y="34" text-anchor="middle" font-weight="700" font-size="16">10</text></g>
+    <g transform="translate(485,145)"><circle r="17" fill="#fff" stroke="#16202B" stroke-width="2"/><path d="M0,-17 L0,17 M-17,0 L17,0 M-12,-12 L12,12 M-12,12 L12,-12" stroke="#16202B" stroke-width="1.2"/><text y="34" text-anchor="middle" font-weight="700" font-size="16">7</text></g>
+    <g transform="translate(585,145)"><circle r="17" fill="#fff" stroke="#16202B" stroke-width="2"/><path d="M0,-17 L0,17 M-17,0 L17,0 M-12,-12 L12,12 M-12,12 L12,-12" stroke="#16202B" stroke-width="1.2"/><text y="34" text-anchor="middle" font-weight="700" font-size="16">4</text></g>
+    <g transform="translate(845,145)"><circle r="17" fill="#fff" stroke="#16202B" stroke-width="2"/><path d="M0,-17 L0,17 M-17,0 L17,0 M-12,-12 L12,12 M-12,12 L12,-12" stroke="#16202B" stroke-width="1.2"/><text y="34" text-anchor="middle" font-weight="700" font-size="16">1</text></g>
 
     <!-- row 2 -->
-    <g transform="translate(225,305)"><circle r="17" fill="#fff" stroke="#16202B" stroke-width="2"/><path d="M0,-17 L0,17 M-17,0 L17,0 M-12,-12 L12,12 M-12,12 L12,-12" stroke="#16202B" stroke-width="1.2"/><text y="34" text-anchor="middle" font-weight="600">F5</text></g>
-    <g transform="translate(485,305)"><circle r="17" fill="#fff" stroke="#16202B" stroke-width="2"/><path d="M0,-17 L0,17 M-17,0 L17,0 M-12,-12 L12,12 M-12,12 L12,-12" stroke="#16202B" stroke-width="1.2"/><text y="34" text-anchor="middle" font-weight="600">F6</text></g>
-    <g transform="translate(585,305)"><circle r="17" fill="#fff" stroke="#16202B" stroke-width="2"/><path d="M0,-17 L0,17 M-17,0 L17,0 M-12,-12 L12,12 M-12,12 L12,-12" stroke="#16202B" stroke-width="1.2"/><text y="34" text-anchor="middle" font-weight="600">F7</text></g>
-    <g transform="translate(845,305)"><circle r="17" fill="#fff" stroke="#16202B" stroke-width="2"/><path d="M0,-17 L0,17 M-17,0 L17,0 M-12,-12 L12,12 M-12,12 L12,-12" stroke="#16202B" stroke-width="1.2"/><text y="34" text-anchor="middle" font-weight="600">F8</text></g>
+    <g transform="translate(225,305)"><circle r="17" fill="#fff" stroke="#16202B" stroke-width="2"/><path d="M0,-17 L0,17 M-17,0 L17,0 M-12,-12 L12,12 M-12,12 L12,-12" stroke="#16202B" stroke-width="1.2"/><text y="34" text-anchor="middle" font-weight="700" font-size="16">11</text></g>
+    <g transform="translate(485,305)"><circle r="17" fill="#fff" stroke="#16202B" stroke-width="2"/><path d="M0,-17 L0,17 M-17,0 L17,0 M-12,-12 L12,12 M-12,12 L12,-12" stroke="#16202B" stroke-width="1.2"/><text y="34" text-anchor="middle" font-weight="700" font-size="16">8</text></g>
+    <g transform="translate(585,305)"><circle r="17" fill="#fff" stroke="#16202B" stroke-width="2"/><path d="M0,-17 L0,17 M-17,0 L17,0 M-12,-12 L12,12 M-12,12 L12,-12" stroke="#16202B" stroke-width="1.2"/><text y="34" text-anchor="middle" font-weight="700" font-size="16">5</text></g>
+    <g transform="translate(845,305)"><circle r="17" fill="#fff" stroke="#16202B" stroke-width="2"/><path d="M0,-17 L0,17 M-17,0 L17,0 M-12,-12 L12,12 M-12,12 L12,-12" stroke="#16202B" stroke-width="1.2"/><text y="34" text-anchor="middle" font-weight="700" font-size="16">2</text></g>
 
     <!-- row 3 -->
-    <g transform="translate(225,460)"><circle r="17" fill="#fff" stroke="#16202B" stroke-width="2"/><path d="M0,-17 L0,17 M-17,0 L17,0 M-12,-12 L12,12 M-12,12 L12,-12" stroke="#16202B" stroke-width="1.2"/><text y="34" text-anchor="middle" font-weight="600">F9</text></g>
-    <g transform="translate(485,460)"><circle r="17" fill="#fff" stroke="#16202B" stroke-width="2"/><path d="M0,-17 L0,17 M-17,0 L17,0 M-12,-12 L12,12 M-12,12 L12,-12" stroke="#16202B" stroke-width="1.2"/><text y="34" text-anchor="middle" font-weight="600">F10</text></g>
-    <g transform="translate(585,460)"><circle r="17" fill="#fff" stroke="#16202B" stroke-width="2"/><path d="M0,-17 L0,17 M-17,0 L17,0 M-12,-12 L12,12 M-12,12 L12,-12" stroke="#16202B" stroke-width="1.2"/><text y="34" text-anchor="middle" font-weight="600">F11</text></g>
-    <g transform="translate(845,460)"><circle r="17" fill="#fff" stroke="#16202B" stroke-width="2"/><path d="M0,-17 L0,17 M-17,0 L17,0 M-12,-12 L12,12 M-12,12 L12,-12" stroke="#16202B" stroke-width="1.2"/><text y="34" text-anchor="middle" font-weight="600">F12</text></g>
+    <g transform="translate(225,460)"><circle r="17" fill="#fff" stroke="#16202B" stroke-width="2"/><path d="M0,-17 L0,17 M-17,0 L17,0 M-12,-12 L12,12 M-12,12 L12,-12" stroke="#16202B" stroke-width="1.2"/><text y="34" text-anchor="middle" font-weight="700" font-size="16">12</text></g>
+    <g transform="translate(485,460)"><circle r="17" fill="#fff" stroke="#16202B" stroke-width="2"/><path d="M0,-17 L0,17 M-17,0 L17,0 M-12,-12 L12,12 M-12,12 L12,-12" stroke="#16202B" stroke-width="1.2"/><text y="34" text-anchor="middle" font-weight="700" font-size="16">9</text></g>
+    <g transform="translate(585,460)"><circle r="17" fill="#fff" stroke="#16202B" stroke-width="2"/><path d="M0,-17 L0,17 M-17,0 L17,0 M-12,-12 L12,12 M-12,12 L12,-12" stroke="#16202B" stroke-width="1.2"/><text y="34" text-anchor="middle" font-weight="700" font-size="16">6</text></g>
+    <g transform="translate(845,460)"><circle r="17" fill="#fff" stroke="#16202B" stroke-width="2"/><path d="M0,-17 L0,17 M-17,0 L17,0 M-12,-12 L12,12 M-12,12 L12,-12" stroke="#16202B" stroke-width="1.2"/><text y="34" text-anchor="middle" font-weight="700" font-size="16">3</text></g>
   </g>
 
   <!-- ============ AC UNITS ============ -->
-  <!-- left wall: 2 ceiling-mounted -->
   <rect x="10" y="110" width="42" height="90" rx="4" fill="#0E6E7A" fill-opacity="0.15" stroke="#0E6E7A" stroke-width="2"/>
   <rect x="10" y="260" width="42" height="90" rx="4" fill="#0E6E7A" fill-opacity="0.15" stroke="#0E6E7A" stroke-width="2"/>
   <line x1="52" y1="155" x2="70" y2="155" stroke="#0E6E7A" stroke-width="2"/>
   <line x1="52" y1="305" x2="70" y2="305" stroke="#0E6E7A" stroke-width="2"/>
   <text x="31" y="230" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0E6E7A" transform="rotate(-90 31 230)">CEILING-MOUNTED ACs (×2)</text>
 
-  <!-- right wall: 2 floor-mounted tower -->
   <rect x="1028" y="110" width="42" height="90" rx="4" fill="#8F6410" fill-opacity="0.15" stroke="#8F6410" stroke-width="2"/>
   <rect x="1028" y="260" width="42" height="90" rx="4" fill="#8F6410" fill-opacity="0.15" stroke="#8F6410" stroke-width="2"/>
   <line x1="1010" y1="155" x2="1028" y2="155" stroke="#8F6410" stroke-width="2"/>
@@ -75,7 +77,6 @@
   <text x="175" y="567" text-anchor="middle" font-size="12" font-weight="600" fill="#8F6410">Fan switchboard</text>
   <path d="M250 550 l8 12 -6 0 8 12" fill="none" stroke="#B07A12" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
 
-  <!-- door gap -->
   <rect x="430" y="557" width="200" height="6" fill="#ffffff" stroke="#ffffff"/>
   <line x1="430" y1="560" x2="480" y2="560" stroke="#16202B" stroke-width="3"/>
   <line x1="580" y1="560" x2="630" y2="560" stroke="#16202B" stroke-width="3"/>
@@ -88,11 +89,11 @@
     <text x="92" y="650">Seating (tapers off — fewer people near the doors)</text>
 
     <circle cx="480" cy="623" r="9" fill="#fff" stroke="#16202B" stroke-width="1.6"/>
-    <text x="497" y="627">Fan — numbered F1–F12, reading order (top-left → bottom-right)</text>
-    <rect x="480" y="638" width="16" height="16" fill="#B07A12" fill-opacity="0.18" stroke="#B07A12" stroke-width="1.6"/>
-    <text x="502" y="650">Fan switchboard + power point</text>
+    <text x="497" y="627">Fan — bold number is its switchboard ID (1–12)</text>
+    <line x1="472" y1="645" x2="488" y2="637" stroke="#16202B" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="497" y="643">Seating turns to face the pulpit — not a uniform grid</text>
   </g>
 
-  <text x="1010" y="622" text-anchor="end" font-size="11.5" fill="#6B7C86">2,400–2,500 sq ft · 12 fans · 4 ACs (2 types)</text>
-  <text x="1010" y="638" text-anchor="end" font-size="10.5" fill="#8f9aa1" font-style="italic">F1–F12 is a reading-order label, not the switchboard's numbering — see §2</text>
+  <text x="1010" y="605" text-anchor="end" font-size="11.5" fill="#6B7C86">2,400–2,500 sq ft · 12 fans · 4 ACs (2 types)</text>
+  <text x="1010" y="619" text-anchor="end" font-size="10.5" fill="#8f9aa1" font-style="italic">Fan numbers are the switchboard's own labels — see hall-survey.md §3</text>
 </svg>

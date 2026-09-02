@@ -7,26 +7,35 @@ with what's now actually known, and narrows what's still open.
 
 ## 1. Layout
 
-![Hall layout: 12 fans in a 4×3 grid, 2 ceiling-mounted ACs on the left wall, 2 floor-mounted tower ACs on the right wall, doors and the fan switchboard at the bottom](images/hall-layout.svg)
+![Hall layout: 12 fans in a 4×3 grid labeled by their switchboard number, 2 ceiling-mounted ACs on the left wall, 2 floor-mounted tower ACs on the right wall, a pulpit at the front, doors and the fan switchboard at the bottom, with seating turning to face the pulpit](images/hall-layout.svg)
 
-- Rectangular hall, 2,400–2,500 sq ft, entrance at one short end, opposite the
-  "front."
+- Rectangular hall, 2,400–2,500 sq ft, entrance at one short end, the pulpit at
+  the opposite ("front") end.
 - **12 fans in a 4×3 grid** — 4 fans deep (front to back), 3 columns per side
-  plus a denser center block.
+  plus a denser center block. **Fan numbers on the diagram are the
+  switchboard's own numbering** (see §3) — there's now one canonical ID per
+  fan, not a separate spatial label to translate.
 - **Seating is not uniform.** A large block seats consistently under the
-  center 6 fans (F2, F3, F6, F7, F10, F11). Two corner pockets (F1, F4) are
-  also consistently seated. The two pockets nearest the doors (F9, F12) taper
-  off — fewer people sit that close to the entrance. This matters directly for
+  center 6 fans (4, 5, 6, 7, 8, 9). Two corner pockets (1, 10) are also
+  consistently seated. The two pockets nearest the doors (3, 12) taper off —
+  fewer people sit that close to the entrance. This matters directly for
   sensor priority (§4) and eventually for which fans matter most to control
   tightly.
+- **Seating faces the pulpit, not just "forward."** Confirmed by the updated
+  sketch: chairs away from the center column turn inward toward the pulpit
+  rather than sitting in uniform forward-facing rows — shallowest angle at the
+  front corners (fans 1, 10), steepest at the back corners (fans 3, 12), with
+  the center column (4–9) facing straight ahead since it's already on-axis.
+  Overall the seating reads as a C/horseshoe curving around three sides of the
+  room, opening toward the pulpit. **This is a Phase 2 enclosure detail worth
+  remembering:** a chair-integrated sensor housing designed for one chair
+  orientation won't drop in cleanly on a chair angled 30–50° differently in
+  another zone — the print design needs to account for varying chair angle by
+  zone, not assume one orientation hall-wide.
 - **4 ACs, 2 types, one type per side** — confirms the original problem
   statement. 2 ceiling-mounted units on the left wall, 2 floor-mounted tower
   units on the right wall.
 - Fan switchboard and a power point are at the entrance end, left side.
-
-The **F1–F12 numbering above is a reading-order label I assigned for this
-document** — top-left to bottom-right — not the switchboard's own numbering.
-See §3.
 
 ## 2. Ceiling: false ceiling, perforated metal tile
 
@@ -66,18 +75,35 @@ This is the best possible outcome:
   are; automate only the ON/OFF switch leg, in parallel with or replacing the
   existing rocker.
 
-There's a separate panel with 10 plain rocker switches (labeled 5–10 and 1–4)
-and 2 power sockets. Those aren't fan switches — no regulators next to them —
-almost certainly the hall lighting circuits. Worth confirming, and **that
-power socket location is a convenient spot to bench-power a Raspberry Pi or
-relay controller** later, since it's already at the same wall as every fan's
-wiring.
+The separate panel with 10 plain rocker switches and 2 power sockets is
+**confirmed to be the hall lighting circuits**, not fans. That power socket
+location is a convenient spot to bench-power a Raspberry Pi or relay
+controller later, since it's already at the same wall as every fan's wiring.
 
-**Open item:** the switchboard's fan numbers (1–12) haven't been matched to
-physical positions in the hall (F1–F12 above). Cheapest way to get this: turn
-on one fan at a time from the switchboard and note which one spins. Worth
-doing in the same visit as the RF survey (sensor-node-spec.md §8, test 2) —
-you'll already be walking the hall fan-by-fan.
+### Switchboard number ↔ hall position
+
+Confirmed by manually testing each switch. This is now each fan's one
+canonical ID — used on the diagram in §1 and in every doc from here on.
+
+| Fan (switch #) | Position |
+|---|---|
+| 1 | Right wall, front |
+| 2 | Right wall, middle |
+| 3 | Right wall, back (near doors — tapering seating) |
+| 4 | Center-right column, front |
+| 5 | Center-right column, middle |
+| 6 | Center-right column, back |
+| 7 | Center-left column, front |
+| 8 | Center-left column, middle |
+| 9 | Center-left column, back |
+| 10 | Left wall, front |
+| 11 | Left wall, middle |
+| 12 | Left wall, back (near doors — tapering seating) |
+
+The numbering runs in clean column order — right wall (1–3), center-right
+column (4–6), center-left column (7–9), left wall (10–12), each top-to-bottom
+— which is a good sign the switchboard was wired methodically and this mapping
+is reliable, not something stitched together ad hoc.
 
 ## 4. AC identification — inconclusive from photos, here's what to get
 
@@ -118,9 +144,9 @@ Cross-referencing design-considerations.md §13:
 | 1 | Ceiling height, flat or vaulted | Flat, false ceiling — height still not measured |
 | 2 | How are the 12 fans switched | **Resolved — individually, see §3** |
 | 3 | Neutrals in switch boxes | Still open — check when at the switchboard |
-| 4 | AC make/model, IR or wired/BMS | Still open — nameplate photo needed, §4 |
+| 4 | AC make/model, IR or wired/BMS | In progress — nameplate photo needed, §4 |
 | 5 | Other uses / schedule for the hall | Still open |
-| 6 | Typical/peak occupancy | Still open — seating layout (§1) suggests it varies by zone, not just by day |
+| 6 | Typical/peak occupancy | Still open — seating layout (§1) confirms it varies sharply by zone, not just by day |
 | 7 | Solar gain / window orientation | Windows confirmed present (curtained) on at least one wall — orientation not yet known |
 | 8 | Heated in winter? | Still open |
 | 9 | Who else can maintain this | Still open |
