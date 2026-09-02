@@ -73,40 +73,51 @@ Sparkfun, or a generic "GY-SHT40"/"GY-SHT31" board (`GY-` is just a generic
 prefix Chinese breakout makers use, not a brand — same chip, no premium
 extras) — is fine. Ask your shop for "SHT31 or SHT40, whichever you have."
 
-Two families beyond that, for different jobs. Don't pick one for everything.
+Every node is the same design now. Stratification sensing is dropped
+(project-context.md, Decisions) in favor of toggling each fan and watching
+chair-height temperature respond directly — so every node is a single
+sensor, chair-mounted, no exceptions. Don't pick one part for everything
+regardless, though:
 
 | Part | Accuracy | Bus | ≈ Price (India) | Use it for |
 |---|---|---|---|---|
-| **SHT31 or SHT40 breakout** ← lead, either | ±0.2 °C | I²C | ₹200–350 | The occupied-zone grid. Whichever your shop stocks — see above, they're interchangeable here. |
+| **SHT31 or SHT40 breakout** ← lead, either | ±0.2 °C | I²C | ₹200–350 | Every node. Whichever your shop stocks — see above, they're interchangeable here. |
 | Adafruit SHT45 breakout | ±0.1 °C | I²C | ₹700–900 | Skip for the cost-sensitive build — the extra precision doesn't matter once cross-calibration (§8, test 4) is done, and it's 3× the price. |
-| **DS18B20** stainless probe, 1–3 m lead | ±0.5 °C | 1-Wire | ₹80–150 | AC supply-air probes, and the ceiling leg of a column node. The cable length is the point, not the accuracy. |
 | BME280 | ±0.5 °C | I²C | ₹150–200 | Skip — worse accuracy than SHT31/40, and its pressure channel is useless here. See the explanation of why this matters for a differential measurement, above in chat / project history. |
 | DHT11 / DHT22 | ±0.5–2 °C | Single-wire (not I²C) | ₹80–150 | **Avoid, despite being everywhere and cheap.** Worse accuracy than even BME280, slow to respond, and not I²C — wrong tool for resolving 2–3 °C gradients between zones. |
 
-### Why DS18B20 for the long runs
+### DS18B20 — parked, not part of the current build
 
-I²C is designed for a few tens of centimetres on a PCB. Pushing it 2–3 m to the
-ceiling works *sometimes* — at 100 kHz with tuned pull-ups — and fails
-intermittently in ways that cost you a weekend. **1-Wire is built for long cable
-runs**: tens of metres, several devices per bus.
+Dropped from the BOM entirely for now. It existed for two jobs, both no
+longer active: measuring a ceiling-height stratification leg (dropped, per
+project-context.md), and probing AC supply-air temperature (a separate,
+optional diagnostic — not scheduled). If either comes back later, the reason
+is worth keeping: I²C is only reliable over a few tens of centimetres, so it
+can't run 2–3 m to a ceiling or into a vent, while 1-Wire (what DS18B20 uses)
+is built for long cable runs.
 
-So a *column node* — the thing that measures your stratification ΔT — is one
-ESP32 with a SHT31/SHT40 on a short cable at head height and a DS18B20 on a 2–3 m
-cable run up to the ceiling. Both sensors share one node, one clock, and one
-calibration session, which is exactly what you want when the quantity of
-interest is the difference between them.
+The *column node* design this enabled — one ESP32 with an SHT31 at head
+height and a DS18B20 on a long cable to the ceiling, sharing one calibration
+session — is retained below for reference only. It's not being built. It
+also only ever worked for a fixed wall/column mount in the first place: the
+cable assumes the enclosure stays still, which doesn't hold for a chair that
+gets picked up and stacked.
 
-**This only works for a fixed wall/column mount.** It assumes the enclosure
-sits still while a cable runs up to a fixed ceiling point — it does not work
-for a chair-attached unit, since the chair moves (this hall's chairs get
-stacked and rearranged) and a tethered ceiling cable can't move with it. For
-a chair-mounted design: skip the column node entirely. Build two *independent*
-single-sensor nodes instead — same ESP32-C3 + SHT31 hardware, no DS18B20, no
-cable between them — one clipped to the chair at occupied-zone height, one
-mounted separately and permanently near the ceiling. Each publishes its own
-reading over WiFi; the ceiling-minus-occupied-zone difference is computed
-later, in software, from the two independent readings — not measured by
-either device itself.
+<details>
+<summary>Column node design (reference only, not in use)</summary>
+
+So a *column node* — the thing that measures a ceiling-vs-occupied ΔT — is
+one ESP32 with an SHT31/SHT40 on a short cable at head height and a DS18B20
+on a 2–3 m cable run up to the ceiling. Both sensors share one node, one
+clock, and one calibration session, which is exactly what you want when the
+quantity of interest is the difference between them.
+
+If revisited, the ceiling sensor would need its own independent node instead
+(same ESP32-C3 + SHT31, no DS18B20, no cable) mounted permanently near the
+ceiling, never on a chair — the difference computed later in software from
+two independent readings, not measured by either device itself.
+
+</details>
 
 ---
 
@@ -146,8 +157,8 @@ always, since the enclosure's own plume rises.
 
 ## 5. Wiring
 
-Four wires for the I²C sensor, three for the DS18B20. Both the XIAO ESP32C3 and
-the SuperMini clone need everything soldered — neither has a plug-in connector.
+Four wires, that's the whole node. Both the XIAO ESP32C3 and the SuperMini
+clone need everything soldered — neither has a plug-in connector.
 
 | SHT31/SHT40 breakout | ESP32-C3 pin | Note |
 |---|---|---|
@@ -155,6 +166,8 @@ the SuperMini clone need everything soldered — neither has a plug-in connector
 | GND | GND | — |
 | SDA | GPIO6 (XIAO: pin D4) | — |
 | SCL | GPIO7 (XIAO: pin D5) | SuperMini clone pin labels vary by seller — check the silkscreen. |
+
+*(DS18B20 wiring, for reference only — not part of the current build, §3):*
 
 | DS18B20 probe | ESP32-C3 pin | Note |
 |---|---|---|
@@ -169,12 +182,8 @@ the easy life.
 
 ### Node #1, confirmed: ESP32-C3 SuperMini + SHT31
 
-**The DS18B20 is not part of node #1.** It's only needed for the later
-*column nodes* — the ones pairing an occupied-zone sensor with a ceiling-level
-one (§4) or an AC supply-air probe (hall-survey.md §5) — because I²C isn't
-reliable over the 2–3 m cable those need, and 1-Wire is. The very first
-build-and-test-it-works node is ESP32-C3 + SHT31 only. Skip DS18B20 until the
-12-node rollout reaches those specific positions.
+Every node built now is this design — ESP32-C3 + SHT31, chair-mounted, one
+sensor, nothing else. No DS18B20, no ceiling variant; see §3 for why.
 
 The pin choices above (GPIO6/GPIO7 for I²C, GPIO4 for 1-Wire) aren't arbitrary
 — they avoid the ESP32-C3's strapping pins (GPIO2, 8, 9, which affect boot
@@ -217,14 +226,15 @@ question that decides whether you build the remaining 10 nodes at ₹450 or
 | Seeed XIAO ESP32C3 ×1 | [Robu.in](https://robu.in/product/seeed-studio-xiao-esp32c3-tiny-mcu-board-with-wi-fi-and-ble-battery-charge-supported-power-efficiency-and-rich-interface/), also on [Amazon.in](https://www.amazon.in/Seeed-Studio-XIAO-ESP32C3-Microcontroller/dp/B0B94JZ2YF) | ~₹400–500. Confirm the listing shows the u.FL + external antenna variant, not a ceramic-only one. |
 | ESP32-C3 SuperMini clone ×1 | [Robu.in](https://robu.in/product/esp32-c3-supermini-expansion-board/) or Amazon.in (several sellers — "ESP32-C3 Super Mini") | ~₹150–200, varies by seller. This is the one under test — don't buy 10 more until §8 test 2 passes. |
 | SHT31 or SHT40 breakout ×2 | Robu.in / Robocraze, or a local electronics shop — ask for either chip name | ~₹200–350 each. One per board — either is fine, see §3. |
-| DS18B20 waterproof probe, 1 m ×2–3 | [Robokits](https://robokits.co.in/sensors/temperature-humidity/ds18b20-temperature-sensor-probe-waterproof-1-meter-length) (~₹83) or [Robocraze](https://robocraze.com/products/ds18b20-waterproof-temperature-sensor-probe-1m-range-7semi) | Cheap enough to grab spares now. |
-| 4.7 kΩ resistor | Any local electronics shop / Robu.in | For the DS18B20 pull-up (§5), one per board. |
 | USB-C cable + 5V supply ×2 | Local | Any phone charger works for bench testing. |
 | Reference thermometer, ±0.1 °C or better | Local instrument shop / Amazon.in | For §8 test 4 later — not needed for the first bring-up test. |
 
-Total for this round: **~₹1,650–1,900** (both boards, both sensors, probes,
-misc) — versus ~₹8,000+ if you'd gone straight to 12 XIAO boards and only
-found out the clone was an option afterward.
+No DS18B20 or pull-up resistor needed — dropped along with stratification
+sensing, see §3.
+
+Total for this round: **~₹1,300–1,700** (both boards, both sensors, misc) —
+versus ~₹8,000+ if you'd gone straight to 12 XIAO boards and only found out
+the clone was an option afterward.
 
 Skip for now (needed later, only if the RF survey says you need the hedge):
 the QT Py, the XIAO ESP32C6, enclosures, and the vented shield — get both
@@ -266,10 +276,6 @@ i2c:
   scl: GPIO7
   frequency: 100kHz            # slow = tolerant of cable length
 
-one_wire:
-  - platform: gpio
-    pin: GPIO4
-
 sensor:
   - platform: sht4x
     address: 0x44
@@ -282,13 +288,6 @@ sensor:
         - median: { window_size: 5, send_every: 3 }
     humidity:
       name: "Relative humidity"
-
-  - platform: dallas_temp        # ceiling leg, column nodes only
-    address: 0x000000000000
-    name: "Ceiling temperature"
-    update_interval: 10s
-    filters:
-      - offset: 0.00
 
   - platform: wifi_signal        # you will need this in test 2
     name: "WiFi RSSI"

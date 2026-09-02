@@ -11,14 +11,9 @@ before proposing anything — it changes what's "sensible" to recommend.
 - **Has a 3D printer.** Custom enclosures are in scope, not just off-the-shelf
   project boxes. Notably: sensor housings designed to integrate into the
   hall's chairs, rather than sit on walls/columns as separate visible units.
-  **Constraint this creates (settled 2026-09):** a chair-mounted enclosure can
-  only be a self-contained, single-sensor, single-MCU occupied-zone node — it
-  cannot also carry the ceiling/stratification sensor, because the chairs get
-  stacked and moved and a cable tethering a chair to a fixed ceiling point
-  doesn't survive that. Stratification is measured by a *second, independent*
-  node (identical hardware, no DS18B20 needed) mounted separately and
-  permanently near the ceiling, never on a chair. See
-  `sensor-node-spec.md` §3.
+  Since stratification sensing is dropped (below), every node is the same
+  design — self-contained, single-sensor, single-MCU, chair-mounted — so
+  there's only one enclosure to design, not two.
 - **Location: India.** Source parts locally where possible (Robu, Robocraze,
   Amazon.in, etc.) rather than assuming US suppliers/prices. Component
   availability and pricing should be re-checked against Indian sourcing, not
@@ -30,6 +25,25 @@ before proposing anything — it changes what's "sensible" to recommend.
   don't just downgrade silently — test the cheap option against a known-good
   one first (the RF survey in `sensor-node-spec.md` §8 already does this),
   then commit to whichever passes at the lower price.
+
+## Decisions
+
+- **Stratification sensing dropped in favor of empirical fan testing
+  (2026-09).** Rather than instrumenting both ceiling and occupied-zone
+  height to infer whether a fan will help (design-considerations.md §1's
+  original two-differential plan), every sensor node measures only at
+  chair/occupied-zone height — the height that actually matters for comfort.
+  A fan's effectiveness in each zone is established directly, once enough
+  nodes are up: toggle the fan, watch whether chair-height temperature in
+  that zone actually drops. This is simpler to build (one node design, not
+  two — see the 3D-printer bullet above) and replaces a theoretical proxy
+  with a direct measurement of the outcome that matters. Traded away: if a
+  fan doesn't help, chair-height-only data can't say why on its own — no
+  fan-needed, poor airflow coverage, and an under-delivering AC all look the
+  same (a flat reading). Cheap enough to work around by hand — a handheld
+  thermometer at the AC vent settles it if a zone underperforms. `sensor-
+  node-spec.md` retains the ceiling/column-node design for reference; it is
+  not currently being built.
 
 ## Working style
 
@@ -50,10 +64,14 @@ before proposing anything — it changes what's "sensible" to recommend.
 2. **Sensor build-up.** Build and test one sensor node, confirm it works,
    then scale up node-by-node while it reports to a laptop. Only once that's
    solid, move the receiving end from laptop to Raspberry Pi.
-3. **Heat map + control logic.** Combine multiple live sensors into a heat
-   map of the hall. Use it to write the fan decision logic. Initially the
-   owner manually toggles fans per the system's output and observes the
-   temperature response — validating the logic before any automation.
+3. **Heat map + empirical fan calibration.** Combine multiple live chair-height
+   sensors into a heat map of the hall — horizontal spread only, per the
+   Decisions section above. For each fan: toggle it on, watch which zones'
+   chair-height readings actually move, record that as the fan's real-world
+   effective area. This *is* the control logic's calibration data, not a
+   separate validation step — write the fan decision rules from what's
+   observed here, then confirm them the same way (manual toggle, watch the
+   result) before any automation.
 4. **Relay / automation.** Wiring the Pi's decisions to actual fan control.
    Deferred — details to be worked out when this phase starts, contingent on
    the fan-wiring survey (see `design-considerations.md` §2).
