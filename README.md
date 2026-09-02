@@ -11,6 +11,8 @@ Design phase. No hardware committed yet.
 
 ## Documentation
 
+- [Project Context](docs/project-context.md) — builder constraints, working
+  style, and the phase plan. Read this first.
 - [Design Considerations](docs/design-considerations.md) — part 1: sensing, calibration,
   networking, mains-side safety, control logic, failure modes, budget, phasing.
 - [Sensor Node Build Spec](docs/sensor-node-spec.md) — part 2: board shortlist,
