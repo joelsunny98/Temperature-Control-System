@@ -27,18 +27,19 @@ One question decides this, and it can only be answered inside the building:
 does the radio hold a solid link from all twelve positions, through whatever
 the hall is built from?
 
-| Board | ≈ Price | Antenna | I²C connector | Why it's on the list |
+| Board | ≈ Price (India) | Antenna | I²C connector | Why it's on the list |
 |---|---|---|---|---|
-| **Seeed XIAO ESP32C3** ← lead | $5 | **u.FL + external antenna included** | solder 4 wires | Best RF per dollar. The external antenna is the whole reason it leads — the one variable you cannot fix in software later. |
-| **Adafruit QT Py ESP32-S3** | $13 | PCB trace | **STEMMA QT — zero solder** | Fastest to assemble twelve times. Plug board → cable → sensor. Weaker antenna is the trade. |
-| **Seeed XIAO ESP32C6** | $8 | u.FL + external | solder 4 wires | Hedge. Adds an 802.15.4 radio, so if WiFi disappoints there's a Thread/Zigbee path without rebuying boards. |
-| ESP32-C3 "SuperMini" clones | $3 | ceramic chip, no u.FL | solder | **Listed to warn you off.** Widely reported poor antenna performance — the ground plane crowds the ceramic. Wrong part for a large hall. |
+| **Seeed XIAO ESP32C3** ← known-good baseline | ₹450 | **u.FL + external antenna included** | solder 4 wires | Best RF you can be confident in. The external antenna is the one variable you cannot fix in software later — this is what test 2 (§8) checks the cheap option *against*. |
+| **ESP32-C3 "SuperMini" clone** ← cost target | ₹150–200 | ceramic chip, no u.FL | solder | **Test this before buying 12.** Roughly a third of the price, but widely reported weaker antenna performance — the ground plane crowds the ceramic. May be fine in this hall, may not. Don't commit to 12 without testing one, per project-context.md's cost-sensitive guidance. |
+| Adafruit QT Py ESP32-S3 | ₹1,100 | PCB trace | STEMMA QT — zero solder | Dropped — costs more than the known-good option for a weaker antenna. Only reconsider if soldering 12 boards turns out to be the real bottleneck, not cost. |
+| Seeed XIAO ESP32C6 | ₹700 | u.FL + external | solder 4 wires | Dropped for now — 802.15.4 hedge isn't worth the premium unless WiFi actually fails the RF survey. |
 
-**Recommendation:** buy one of each of the top three and run the RF survey (§8,
-test 2) before committing to twelve of anything. About $26 of boards to de-risk
-a $300 order and a rollout. If the survey is comfortable everywhere, take the
-QT Py for the build and never solder. If it's marginal anywhere, take the
-XIAO C3 for its external antenna.
+**Recommendation:** buy **one XIAO ESP32C3 and one SuperMini clone** and run
+the RF survey (§8, test 2) side by side, in the same 12 positions. If the
+clone holds up, build all 12 nodes on clones — roughly ₹3,000 saved across the
+full build versus the known-good board. If it drops out anywhere the XIAO
+doesn't, that's the answer too, and the ₹450 for one XIAO wasn't wasted — it's
+what tells you the clone isn't good enough before you've bought 12 of them.
 
 ---
 
@@ -46,12 +47,12 @@ XIAO C3 for its external antenna.
 
 Two families, for different jobs. Don't pick one for everything.
 
-| Part | Accuracy | Bus | Use it for |
-|---|---|---|---|
-| **SHT45** breakout (Qwiic/STEMMA QT) | ±0.1 °C | I²C | The occupied-zone grid. Best accuracy at this price; humidity comes free. |
-| SHT41 / SHT31-D breakout | ±0.2 °C | I²C | Same job, cheaper. Fine — well inside what cross-calibration cleans up. |
-| **DS18B20** stainless probe, 1–3 m lead | ±0.5 °C | 1-Wire | AC supply-air probes, and the ceiling leg of a column node. The cable length is the point. |
-| BME280 | ±0.5 °C | I²C | Skip. Worse temperature accuracy than SHT4x; its pressure channel is useless here. |
+| Part | Accuracy | Bus | ≈ Price (India) | Use it for |
+|---|---|---|---|---|
+| **GY-SHT40 module** ← lead | ±0.2 °C | I²C | ₹250 | The occupied-zone grid. Same chip family as the pricier Adafruit SHT45 breakout at roughly a third the cost — the extra ±0.1 °C precision on SHT45 doesn't matter once cross-calibration (§8, test 4) is done anyway. |
+| Adafruit SHT45 breakout | ±0.1 °C | I²C | ₹700–900 | Skip for the cost-sensitive build — the precision isn't worth 3× the price here. |
+| **DS18B20** stainless probe, 1–3 m lead | ±0.5 °C | 1-Wire | ₹80–150 | AC supply-air probes, and the ceiling leg of a column node. The cable length is the point, not the accuracy. |
+| BME280 | ±0.5 °C | I²C | ₹150–200 | Skip regardless of cost — worse temperature accuracy than the SHT4x family, and its pressure channel is useless here. |
 
 ### Why DS18B20 for the long runs
 
@@ -61,7 +62,7 @@ intermittently in ways that cost you a weekend. **1-Wire is built for long cable
 runs**: tens of metres, several devices per bus.
 
 So a *column node* — the thing that measures your stratification ΔT — is one
-ESP32 with an SHT45 on a short cable at head height and a DS18B20 on a 2–3 m
+ESP32 with a GY-SHT40 on a short cable at head height and a DS18B20 on a 2–3 m
 cable run up to the ceiling. Both sensors share one node, one clock, and one
 calibration session, which is exactly what you want when the quantity of
 interest is the difference between them.
@@ -104,73 +105,66 @@ always, since the enclosure's own plume rises.
 
 ## 5. Wiring
 
-Four wires for the I²C sensor, three for the DS18B20. On a QT Py with STEMMA QT
-the I²C side is a plug and the first table doesn't apply.
+Four wires for the I²C sensor, three for the DS18B20. Both the XIAO ESP32C3 and
+the SuperMini clone need everything soldered — neither has a plug-in connector.
 
-| SHT45 breakout | XIAO ESP32C3 pin | Qwiic cable colour |
+| GY-SHT40 module | ESP32-C3 pin | Note |
 |---|---|---|
-| VIN | 3V3 | Red |
-| GND | GND | Black |
-| SDA | D4 / GPIO6 | Blue |
-| SCL | D5 / GPIO7 | Yellow |
+| VCC (may be labeled VIN) | 3V3 | — |
+| GND | GND | — |
+| SDA | GPIO6 (XIAO: pin D4) | — |
+| SCL | GPIO7 (XIAO: pin D5) | SuperMini clone pin labels vary by seller — check the silkscreen. |
 
-| DS18B20 probe | XIAO ESP32C3 pin | Note |
+| DS18B20 probe | ESP32-C3 pin | Note |
 |---|---|---|
 | Red | 3V3 | — |
 | Black | GND | — |
-| Yellow (data) | D2 / GPIO4 | **4.7 kΩ pull-up from data to 3V3.** Required — it will not work without it. |
+| Yellow (data) | GPIO4 (XIAO: pin D2) | **4.7 kΩ pull-up from data to 3V3.** Required — it will not work without it. |
 
-Breakouts with Qwiic/STEMMA QT connectors carry their own I²C pull-ups, so don't
-add more. Daisy-chaining several devices puts pull-ups in parallel and can leave
-the bus too stiff to pull low — one more reason one sensor per bus is the easy
-life.
+Most GY-SHT40 boards already carry their own I²C pull-up resistors, so don't
+add more. Daisy-chaining several I²C devices puts pull-ups in parallel and can
+leave the bus too stiff to pull low — one more reason one sensor per bus is
+the easy life.
 
 ---
 
-## 6. Prototype bill of materials
+## 6. Bill of materials
 
-Three nodes, three board variants, enough to run every test in §8. Prices are
-indicative (mid-2026, before shipping and duty) — order of magnitude, not quotes.
+Superseded by the cost-sensitive India sourcing list right below — buy for
+that, not this. Two things still apply regardless of the sourcing pass:
 
-| Qty | Item | Purpose | ≈ Cost |
-|---|---|---|---|
-| 1 | Seeed XIAO ESP32C3 (with external antenna) | RF benchmark — the one to beat | $5 |
-| 1 | Adafruit QT Py ESP32-S3 | Assembly-ergonomics candidate | $13 |
-| 1 | Seeed XIAO ESP32C6 | 802.15.4 hedge | $8 |
-| 3 | SHT45 breakout, Qwiic/STEMMA QT | One per node | $24 |
-| 4 | Qwiic/STEMMA QT cable, 100–200 mm | Gets the sensor off the board | $7 |
-| 2 | Qwiic-to-male-header pigtail | The XIAOs have no QT socket | $4 |
-| 3 | DS18B20 stainless probe, 1–3 m lead | Supply-air + ceiling leg | $8 |
-| 1 | 4.7 kΩ resistors (pack) | 1-Wire pull-up | $2 |
-| 1 | Reference thermometer, ±0.1 °C | **Calibration ground truth** | $25 |
-| 3 | USB-C supply + cable | Mains power | $18 |
-| 3 | Vented enclosure / louvred box | Radiation shield | $12 |
-| 1 | Breadboard + jumper set | Bench work | $8 |
-| | **Prototype stage total** | | **≈ $134** |
+- You don't need the Pi to start — ESPHome will log to a laptop running
+  Mosquitto.
+- When you do buy the Pi: Raspberry Pi 5 (4 GB), active cooler, official
+  supply, and **an SSD rather than an SD card**. Check Robu.in / Robocraze /
+  local distributors for current INR pricing — figure roughly ₹8,000–10,000
+  all in, but verify before buying.
 
-You don't need the Pi to start — ESPHome will log to a laptop running Mosquitto.
-When you do buy it: Raspberry Pi 5 (4 GB), active cooler, official 27 W supply,
-and **an SSD rather than an SD card**. Roughly $150–200 all in.
+### India sourcing — node #1 and its RF-test partner
 
-### India sourcing — node #1 only
-
-Per project-context.md: solder-capable, no fixed budget, source locally. Don't
-order all three board variants yet — build **one** node first, per the phase
-plan, and only order the RF-comparison variants (§8, test 2) if this one's
-WiFi turns out shaky in the hall.
+Per project-context.md: solder-capable, cost-sensitive, source locally.
+Building **two** boards right now, not one — the known-good XIAO and the cheap
+clone — because the RF survey (§8, test 2) needs both to answer the only
+question that decides whether you build the remaining 10 nodes at ₹450 or
+₹200 each.
 
 | Item | Where | Notes |
 |---|---|---|
-| Seeed XIAO ESP32C3 | [Robu.in](https://robu.in/product/seeed-studio-xiao-esp32c3-tiny-mcu-board-with-wi-fi-and-ble-battery-charge-supported-power-efficiency-and-rich-interface/), also on [Amazon.in](https://www.amazon.in/Seeed-Studio-XIAO-ESP32C3-Microcontroller/dp/B0B94JZ2YF) | ~₹400–500. Confirm the listing shows the u.FL + external antenna variant, not a ceramic-only one. |
-| SHT45 breakout | [Robu.in](https://robu.in/product/adafruit-sensirion-sht45-precision-temperature-humidity-sensor/) (Adafruit, STEMMA QT) or [Robocraze](https://robocraze.com/products/7semi-sht45-humidity-temperature-sensor-breakout-board-with-4-pin-connector) (7Semi, JST) | Either works — you're soldering anyway, so the connector type doesn't matter; wire directly to the breakout's pin pads. |
-| DS18B20 waterproof probe, 1 m | [Robokits](https://robokits.co.in/sensors/temperature-humidity/ds18b20-temperature-sensor-probe-waterproof-1-meter-length) (~₹83) or [Robocraze](https://robocraze.com/products/ds18b20-waterproof-temperature-sensor-probe-1m-range-7semi) | Cheap enough to grab 2–3 even for one node — you'll want spares. |
-| 4.7 kΩ resistor | Any local electronics shop / Robu.in | For the DS18B20 pull-up (§5). |
-| USB-C cable + 5V supply | Local | Any phone charger works for bench testing. |
+| Seeed XIAO ESP32C3 ×1 | [Robu.in](https://robu.in/product/seeed-studio-xiao-esp32c3-tiny-mcu-board-with-wi-fi-and-ble-battery-charge-supported-power-efficiency-and-rich-interface/), also on [Amazon.in](https://www.amazon.in/Seeed-Studio-XIAO-ESP32C3-Microcontroller/dp/B0B94JZ2YF) | ~₹400–500. Confirm the listing shows the u.FL + external antenna variant, not a ceramic-only one. |
+| ESP32-C3 SuperMini clone ×1 | [Robu.in](https://robu.in/product/esp32-c3-supermini-expansion-board/) or Amazon.in (several sellers — "ESP32-C3 Super Mini") | ~₹150–200, varies by seller. This is the one under test — don't buy 10 more until §8 test 2 passes. |
+| GY-SHT40 module ×2 | Robu.in / Robocraze — search "GY-SHT40" | ~₹250 each. One per board. |
+| DS18B20 waterproof probe, 1 m ×2–3 | [Robokits](https://robokits.co.in/sensors/temperature-humidity/ds18b20-temperature-sensor-probe-waterproof-1-meter-length) (~₹83) or [Robocraze](https://robocraze.com/products/ds18b20-waterproof-temperature-sensor-probe-1m-range-7semi) | Cheap enough to grab spares now. |
+| 4.7 kΩ resistor | Any local electronics shop / Robu.in | For the DS18B20 pull-up (§5), one per board. |
+| USB-C cable + 5V supply ×2 | Local | Any phone charger works for bench testing. |
 | Reference thermometer, ±0.1 °C or better | Local instrument shop / Amazon.in | For §8 test 4 later — not needed for the first bring-up test. |
 
-Skip for node #1 (needed later, for the full 3-node comparison or the
-12-node build): the QT Py, the XIAO ESP32C6, enclosures, and the vented
-shield — get one node talking over MQTT first.
+Total for this round: **~₹1,650–1,900** (both boards, both sensors, probes,
+misc) — versus ~₹8,000+ if you'd gone straight to 12 XIAO boards and only
+found out the clone was an option afterward.
+
+Skip for now (needed later, only if the RF survey says you need the hedge):
+the QT Py, the XIAO ESP32C6, enclosures, and the vented shield — get both
+boards talking over MQTT first.
 
 ---
 
@@ -180,12 +174,16 @@ ESPHome, not Arduino. You get OTA updates to all twelve nodes, MQTT with
 last-will built in, and filters and calibration offsets as config rather than
 code.
 
+For the SuperMini clone, swap `board: seeed_xiao_esp32c3` for
+`board: esp32-c3-devkitm-1` (the generic ESP32-C3 target) — everything else in
+this config is identical, since both boards run the same chip.
+
 ```yaml
 esphome:
   name: hall-sensor-01
 
 esp32:
-  board: seeed_xiao_esp32c3
+  board: seeed_xiao_esp32c3    # SuperMini clone: esp32-c3-devkitm-1
   framework: { type: esp-idf }
 
 wifi:
@@ -258,13 +256,16 @@ thermometer next to the sensor.
 **Pass:** readings within 1 °C of reference, publishing every 10 s.
 
 ### Test 2 — RF survey (half a day, in the hall)
-Put the AP where it will actually live. Carry one node of each type to all
-twelve intended positions, sitting at each for five minutes, logging RSSI and
-counting publishes. Do it with the hall **full** if you can — bodies attenuate
-2.4 GHz noticeably.
-**Pass:** RSSI ≥ −70 dBm and zero dropped publishes at every position.
-**Fail:** move the AP, or commit to the external-antenna board. Don't paper over
-it in software.
+Put the AP where it will actually live. Carry both boards — the XIAO and the
+SuperMini clone — to all twelve intended positions, sitting at each for five
+minutes, logging RSSI and counting publishes for both. Do it with the hall
+**full** if you can — bodies attenuate 2.4 GHz noticeably.
+**Pass (clone):** RSSI ≥ −70 dBm and zero dropped publishes at every position,
+matching the XIAO closely enough that the price difference isn't buying you
+anything → build the remaining 10 nodes on clones.
+**Fail (clone), pass (XIAO):** the antenna difference is real in this
+building → build on the XIAO instead, the ₹250/node premium bought something.
+**Fail (both):** move the AP. Don't paper over it in software either way.
 
 ### Test 3 — Self-heating characterisation (overnight)
 Two nodes side by side: one sensor on the board, one on a 150 mm cable in a

@@ -18,9 +18,13 @@ before proposing anything — it changes what's "sensible" to recommend.
   Amazon.in, etc.) rather than assuming US suppliers/prices. Component
   availability and pricing should be re-checked against Indian sourcing, not
   carried over from earlier USD estimates in `sensor-node-spec.md`.
-- **No fixed budget.** Optimize for the right part and for build quality, not
-  for cost. Budget tables in earlier docs are informational, not a
-  constraint to design around.
+- **Cost-sensitive — optimize for cheap.** *(Corrected 2026-09; earlier
+  guidance here said "no fixed budget," which was wrong.)* Default to the
+  cheapest part that still does the job, not the highest-spec one. Where a
+  cheaper part carries real risk (e.g. an unverified antenna in a large hall),
+  don't just downgrade silently — test the cheap option against a known-good
+  one first (the RF survey in `sensor-node-spec.md` §8 already does this),
+  then commit to whichever passes at the lower price.
 
 ## Working style
 
