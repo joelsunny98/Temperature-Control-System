@@ -155,6 +155,22 @@ add more. Daisy-chaining several I²C devices puts pull-ups in parallel and can
 leave the bus too stiff to pull low — one more reason one sensor per bus is
 the easy life.
 
+### Node #1, confirmed: ESP32-C3 SuperMini + SHT31
+
+The pin choices above (GPIO6/GPIO7 for I²C, GPIO4 for 1-Wire) aren't arbitrary
+— they avoid the ESP32-C3's strapping pins (GPIO2, 8, 9, which affect boot
+mode and are best left alone) and match Espressif's own reference pinout, so
+they're safe on any ESP32-C3 board, SuperMini included. On the SuperMini these
+are typically silkscreened directly as `GPIO6`, `GPIO7`, `GPIO4` — no
+Seeed-style `D0`–`D10` relabeling to translate, just wire straight to the
+printed pin. Confirm against your specific board before soldering — clone
+quality and labeling vary by seller/batch.
+
+**Power:** the SuperMini takes 5V over its USB-C port, same as charging a
+phone. During bring-up (§8 test 1), the USB cable to your laptop powers *and*
+flashes it — no separate supply needed yet. Once it's a permanent install,
+that becomes a USB wall adapter instead of a laptop; nothing else changes.
+
 ---
 
 ## 6. Bill of materials
