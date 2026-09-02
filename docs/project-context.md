@@ -56,13 +56,14 @@ before proposing anything — it changes what's "sensible" to recommend.
   continuous unattended operation and would have needed a sleep-sample-wake
   firmware cycle — not needed given how this is actually used.)
 
-  Circuit, three parts: LiPo cell (single-cell, ~2000 mAh sized for a few
-  services between recharges) → a combined charge-and-boost module (not a
-  bare TP4056 — needs to output a regulated steady 5V regardless of battery
-  level, since raw LiPo voltage swings 4.2V→3.0V across discharge and a
-  clone board's onboard regulator headroom can't be assumed) → SPST switch
-  → board's USB-C/5V input. sensor-node-spec.md doesn't have this yet as of
-  this note — wiring/BOM currently only reflects USB-powered node #1.
+  Circuit, confirmed against the actual Blueprint.io wiring output: LiPo
+  cell → charge/boost module (stays connected to the battery at all times,
+  so USB-C charging works regardless of switch position) → SPST switch →
+  board's 5V input. The switch sits *after* the module, gating only the
+  MCU — not between the battery and the module, which would have blocked
+  charging while switched off. Full build steps, wiring table, firmware, and
+  safety notes: `chair-node-build-guide.md`. `sensor-node-spec.md` §5 also
+  carries this circuit for the "why."
 
   Still true: node #1 (bring-up/firmware validation) stays on USB power
   first — this battery circuit is being built as the *next* node, not

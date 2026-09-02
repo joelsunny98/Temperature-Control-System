@@ -19,3 +19,6 @@ Design phase. No hardware committed yet.
   bill of materials, ESPHome firmware, and the five-test bring-up plan.
 - [Hall Survey](docs/hall-survey.md) — layout diagram, fan switchboard findings,
   and what's still needed on the AC identification.
+- [Chair Node Build Guide](docs/chair-node-build-guide.md) — the confirmed
+  build: bill of materials, wiring (including the battery/switch circuit),
+  firmware, assembly order, and safety notes for one node.
