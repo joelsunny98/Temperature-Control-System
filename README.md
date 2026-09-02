@@ -17,3 +17,5 @@ Design phase. No hardware committed yet.
   networking, mains-side safety, control logic, failure modes, budget, phasing.
 - [Sensor Node Build Spec](docs/sensor-node-spec.md) — part 2: board shortlist,
   bill of materials, ESPHome firmware, and the five-test bring-up plan.
+- [Hall Survey](docs/hall-survey.md) — layout diagram, fan switchboard findings,
+  and what's still needed on the AC identification.
