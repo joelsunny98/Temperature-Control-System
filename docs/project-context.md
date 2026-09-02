@@ -44,6 +44,24 @@ before proposing anything — it changes what's "sensible" to recommend.
   thermometer at the AC vent settles it if a zone underperforms. `sensor-
   node-spec.md` retains the ceiling/column-node design for reference; it is
   not currently being built.
+- **Chair nodes will be battery-powered, not USB (2026-09).** Follows from
+  the chair-mount decision above — a chair that gets stacked and moved was
+  never going to stay wall-plugged, so battery is the coherent choice here,
+  not a compromise. Not yet implemented: node #1 stays on USB power for
+  bring-up (proving the sensor/firmware works is one variable at a time, not
+  two). Two things battery power requires before it's real, not just "add a
+  battery": (1) a physical battery — a small USB power bank inside the
+  enclosure is the simple starting point, no circuit design needed; a bare
+  LiPo + charging module is more compact but only works if the specific
+  board variant has a battery input, check before buying; (2) firmware
+  changes — the current config keeps WiFi connected continuously
+  (`power_save_mode: none`, written for mains power), which will drain a
+  small battery in under a day. Real battery life needs a sleep-sample-wake
+  cycle, not implemented yet. Also flagging the operational cost plainly:
+  12 units each needing an unscheduled recharge/swap is the kind of thing
+  design-considerations.md warned quietly stops happening in a
+  volunteer-run building — worth a simple habit (check batteries when
+  chairs get set up) rather than assuming it'll just get done.
 
 ## Working style
 
