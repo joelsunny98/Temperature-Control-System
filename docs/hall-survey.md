@@ -1,7 +1,8 @@
 # Hall Survey — First Pass
 
-Based on the hand-drawn layout, hall photos, switchboard photos, and walkthrough
-video supplied 2026-09-02. This replaces guesswork in
+Based on the hand-drawn layout, hall photos, switchboard photos, walkthrough
+video, AC mounting-height measurements, and a purchase invoice, supplied
+across early September 2026. This replaces guesswork in
 [Design Considerations §2](design-considerations.md#2-phase-0--the-survey-you-must-do-before-buying-hardware)
 with what's now actually known, and narrows what's still open.
 
@@ -105,25 +106,52 @@ column (4–6), center-left column (7–9), left wall (10–12), each top-to-bot
 — which is a good sign the switchboard was wired methodically and this mapping
 is reliable, not something stitched together ad hoc.
 
-## 4. AC identification — resolved, with one correction
+## 4. AC identification
 
-| | Model | Capacity | Type | Refrigerant | Power |
+| | Indoor unit | Outdoor unit | Capacity | Refrigerant | Power |
 |---|---|---|---|---|---|
-| Floor-mounted tower ×2 | Daikin FVRN125AXV16 | 3.8 TR | Non-inverter, 3-phase | R-410A | 380–415V, 3-ph |
-| Ceiling-mounted split | Daikin FTE60UV16 | 1.8 TR, 1★ | Non-inverter, 1-phase | R-32 | 230V, 1-ph |
-| Ceiling-mounted split | Daikin FTL35UV16 | 1 TR, 3★ | Non-inverter, 1-phase | R-32 | 230V, 1-ph |
+| Ceiling-mounted split | Daikin FTE60UV16 (SN 76444) | Daikin RE60UV16 (SN 74717) | 1.8 TR, 1★, non-inverter | R-32 | 230V, 1-ph |
+| Ceiling-mounted split | Daikin FTL35UV16 (SN 31384) | Daikin RL35UV16 (SN 43123) | 1 TR, 3★, non-inverter | R-32 | 230V, 1-ph |
+| Floor-mounted tower ×2 | Daikin FVRN125AXV16 *(unverified — see below)* | — | 3.8 TR, non-inverter, 3-phase | R-410A | 380–415V, 3-ph |
 
-**Correction to flag:** the notes named the ceiling-mounted units as
-Mitsubishi, but every retailer listing for both `FTE60UV16` and `FTL35UV16`
-identifies them as **Daikin** — these model-number prefixes (FTE, FTL) are
-Daikin's own residential split-AC naming, not Mitsubishi's. Worth a second
-look at the physical nameplate/logo to confirm, but if the model numbers are
-right, **all four ACs in the hall are Daikin** — one brand, not two. That's
-good news for later: one IR/BMS protocol family to integrate against instead
-of two, when design-considerations.md §7 (AC-side control) comes up.
+**The purchase invoice (Cool Air Enterprises → Grace City Trust, invoice
+#015, 6-May-2025) settles the brand question for the two ceiling units:**
+every line on it — both these units and everything else on the same order —
+is coded in Daikin's own indoor/outdoor naming scheme (`FTE`/`RE`, `FTL`/`RL`).
+There's no Mitsubishi model-numbering convention that produces `FTE60UV16` or
+`FTL35UV16`; a dealer invoice wouldn't write Daikin-format codes for a
+different manufacturer's product.
 
-Also — the "ceiling-mounted" units turn out to be **standard high-wall split
-indoor units**, not ceiling-suspended cassette units as the photo shape
+That leaves a real discrepancy against what you've seen in person, so rather
+than just asserting Daikin, here's the exact tiebreaker: **check the
+nameplate sticker on each unit for serial number 76444 (the 1.8 TR unit) or
+31384 (the 1 TR unit).** Whatever brand is printed above a matching serial
+number is the answer — a serial number can't be misread the way a logo across
+the hall can.
+
+Two other things from the invoice worth knowing:
+
+- **The tower ACs are confirmed absent from this invoice** — consistent with
+  what you said about them being purchased separately. No tower units appear
+  as a new purchase anywhere on it. So the `FVRN125AXV16` model number still
+  needs its own confirmation once you have that separate receipt or a
+  nameplate photo — nothing here changes its status.
+- **The same job that installed these two ceiling splits also removed and
+  reinstalled the hall's existing tower units** — the labour invoice (Cool
+  Air Enterprises #SB038, 8-May-2025) itemizes "Old Tower A/C Unit Removing
+  Charge – 2 Nos" and "Old Tower A/C Unit Re Installation Work – 2 Nos"
+  alongside the new ceiling-split installation. Sounds like this was one
+  combined renovation visit rather than unrelated events — worth knowing if
+  you're trying to date when the tower units themselves were first installed
+  (this invoice only re-hung the existing ones, it didn't buy new ones).
+
+*(The same invoice also lists a 0.9 TR split and two 3.55 TR "ceiling
+suspended" units — those don't match the hall's confirmed 2-ceiling-unit
+layout from §1 and are presumably for another room on the property. Not
+included above; flag if any of those are actually in this hall instead.)*
+
+Separately — the "ceiling-mounted" units turn out to be **standard high-wall
+split indoor units**, not ceiling-suspended cassette units as the photo shape
 suggested. They just sit unusually high (260–270 cm, in a 280 cm room) — see
 §5, which is exactly what made them read as "ceiling-mounted" both in person
 and in the earlier photo analysis.
@@ -176,7 +204,7 @@ Cross-referencing design-considerations.md §13:
 | 1 | Ceiling height, flat or vaulted | **Resolved — flat, false ceiling, 280 cm** |
 | 2 | How are the 12 fans switched | **Resolved — individually, see §3** |
 | 3 | Neutrals in switch boxes | Still open — check when at the switchboard |
-| 4 | AC make/model, IR or wired/BMS | **Resolved — see §4** (wired/BMS vs. IR-only still to confirm) |
+| 4 | AC make/model, IR or wired/BMS | Ceiling splits: models confirmed by invoice, brand pending nameplate check (§4). Tower units: model still unverified, purchased separately. IR vs. wired/BMS not yet checked on any unit |
 | 5 | Other uses / schedule for the hall | Still open |
 | 6 | Typical/peak occupancy | Still open — seating layout (§1) confirms it varies sharply by zone, not just by day |
 | 7 | Solar gain / window orientation | Windows confirmed present (curtained) on at least one wall — orientation not yet known |
