@@ -105,46 +105,78 @@ column (4–6), center-left column (7–9), left wall (10–12), each top-to-bot
 — which is a good sign the switchboard was wired methodically and this mapping
 is reliable, not something stitched together ad hoc.
 
-## 4. AC identification — inconclusive from photos, here's what to get
+## 4. AC identification — resolved, with one correction
 
-I looked at the AC photos and pulled frames from the walkthrough video. Neither
-gives a reliable read on make/model:
+| | Model | Capacity | Type | Refrigerant | Power |
+|---|---|---|---|---|---|
+| Floor-mounted tower ×2 | Daikin FVRN125AXV16 | 3.8 TR | Non-inverter, 3-phase | R-410A | 380–415V, 3-ph |
+| Ceiling-mounted split | Daikin FTE60UV16 | 1.8 TR, 1★ | Non-inverter, 1-phase | R-32 | 230V, 1-ph |
+| Ceiling-mounted split | Daikin FTL35UV16 | 1 TR, 3★ | Non-inverter, 1-phase | R-32 | 230V, 1-ph |
 
-- The **floor-mounted tower units** (right wall) are visible closely enough to
-  guess at a manufacturer, but a guess is exactly the wrong thing to hand you
-  for something you'll use to order an IR blaster or look up a datasheet — a
-  misread brand sends you down the wrong path entirely.
-- The **ceiling-mounted units** (left wall) are large, elongated, mounted
-  tight against the ceiling — consistent with a "ceiling suspended" ductless
-  indoor unit rather than a standard high-wall split (which is smaller/more
-  square) or a cassette (which sits flush inside the ceiling grid, not hanging
-  below it). That's a shape observation, not a brand identification.
+**Correction to flag:** the notes named the ceiling-mounted units as
+Mitsubishi, but every retailer listing for both `FTE60UV16` and `FTL35UV16`
+identifies them as **Daikin** — these model-number prefixes (FTE, FTL) are
+Daikin's own residential split-AC naming, not Mitsubishi's. Worth a second
+look at the physical nameplate/logo to confirm, but if the model numbers are
+right, **all four ACs in the hall are Daikin** — one brand, not two. That's
+good news for later: one IR/BMS protocol family to integrate against instead
+of two, when design-considerations.md §7 (AC-side control) comes up.
 
-**What actually resolves this:** every AC indoor and outdoor unit carries a
-**rating label / nameplate** — a sticker, usually on the side or back panel
-(sometimes behind a small flap), listing brand, exact model number, capacity
-(tons or BTU/hr), refrigerant type, and often a QR code. That's the
-authoritative source design-considerations.md §2 originally asked for
-("Model numbers, capacity... whether they have a wired controller, IR remote,
-or any BMS/Modbus interface").
+Also — the "ceiling-mounted" units turn out to be **standard high-wall split
+indoor units**, not ceiling-suspended cassette units as the photo shape
+suggested. They just sit unusually high (260–270 cm, in a 280 cm room) — see
+§5, which is exactly what made them read as "ceiling-mounted" both in person
+and in the earlier photo analysis.
 
-**Action step:** next visit, photograph the nameplate on one unit of each type
-(one ceiling-mounted, one floor-mounted tower) — close enough to read the
-model number — plus whichever remote control or wall controller is used for
-each. That's a 5-minute job and it's the one piece of data that unblocks
-Phase 4 AC-side integration (design-considerations.md §7, "Do not forget the
-ACs themselves").
+### This quantifies why the hall has hot and cold pockets
 
-## 5. Updated open questions
+Two numbers explain the imbalance the whole project exists to fix:
+
+- **Capacity is lopsided 2.7× toward the tower side.** Left wall (ceiling
+  splits): 1.8 + 1 = **2.8 TR**. Right wall (towers): 3.8 × 2 = **7.6 TR**.
+- **Discharge height differs by ~90–115 cm between the two types** — see the
+  cross-section in §5. The tower units push air out around chest/shoulder
+  height (150–187 cm); the ceiling splits push it out just under the ceiling
+  (260–270 cm), a full storey higher, with more room to stratify or miss the
+  occupied zone before it's felt.
+
+So the right side of the hall gets nearly 3× the cooling, delivered close to
+where people actually are; the left side gets much less, delivered from
+almost the ceiling. That asymmetry — not just "two different AC types" in the
+abstract — is the mechanism design-considerations.md §1 was theorizing about
+generically. It's now measured, not assumed.
+
+## 5. Vertical profile — mounting heights
+
+![Cross-section of the hall showing the ceiling-mounted split's throw from near-ceiling height, the floor tower's throw from chest height, the fan at 247 cm, and the roughly one-metre gap in discharge height between the two AC types](images/hall-cross-section.svg)
+
+Measurements as given: ceiling 280 cm · fans at 247 cm blade height · ceiling
+splits mounted 260–270 cm · tower units 187 cm tall with vents in the top
+37 cm (150–187 cm off the floor).
+
+Two things worth carrying into Phase 2 sensor placement:
+
+- **Fans sit below both AC discharge heights**, which is the right place for
+  them — they're positioned to catch air from either type before it settles,
+  not above the disturbance.
+- **The tower side may not stratify the same way the split side does.** A
+  vent at 150–187 cm is throwing air roughly through the seated/standing head
+  zone directly, rather than from the ceiling down through it. Worth
+  considering a sensor at tower-vent height (~165 cm) on that side specifically
+  during Phase 2, in addition to the occupied-zone and ceiling sensors already
+  planned in sensor-node-spec.md §4 — the two sides of the hall may turn out to
+  need different sensor heights to characterize properly, not identical rigs.
+
+## 6. Updated open questions
 
 Cross-referencing design-considerations.md §13:
 
 | # | Question | Status |
 |---|---|---|
-| 1 | Ceiling height, flat or vaulted | Flat, false ceiling — height still not measured |
+| 1 | Ceiling height, flat or vaulted | **Resolved — flat, false ceiling, 280 cm** |
 | 2 | How are the 12 fans switched | **Resolved — individually, see §3** |
 | 3 | Neutrals in switch boxes | Still open — check when at the switchboard |
-| 4 | AC make/model, IR or wired/BMS | In progress — nameplate photo needed, §4 |
+| 4 | AC make/model, IR or wired/BMS | **Resolved — see §4** (wired/BMS vs. IR-only still to confirm) |
 | 5 | Other uses / schedule for the hall | Still open |
 | 6 | Typical/peak occupancy | Still open — seating layout (§1) confirms it varies sharply by zone, not just by day |
 | 7 | Solar gain / window orientation | Windows confirmed present (curtained) on at least one wall — orientation not yet known |

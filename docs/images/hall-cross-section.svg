@@ -1,0 +1,70 @@
+<svg viewBox="0 0 900 480" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+  <rect width="900" height="480" fill="#ffffff"/>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <polygon points="0,0.5 9,5 0,9.5" fill="#16202B"/>
+    </marker>
+    <marker id="arT" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <polygon points="0,0.5 9,5 0,9.5" fill="#8F6410"/>
+    </marker>
+    <marker id="arC" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <polygon points="0,0.5 9,5 0,9.5" fill="#0E6E7A"/>
+    </marker>
+  </defs>
+
+  <!-- floor & ceiling -->
+  <line x1="100" y1="420" x2="800" y2="420" stroke="#16202B" stroke-width="2.5"/>
+  <line x1="100" y1="60"  x2="800" y2="60"  stroke="#16202B" stroke-width="2.5"/>
+  <text x="60" y="424" text-anchor="end" font-size="12" fill="#43555F">0 cm</text>
+  <text x="60" y="64"  text-anchor="end" font-size="12" fill="#43555F">280 cm</text>
+  <text x="450" y="440" text-anchor="middle" font-size="12.5" fill="#43555F">FLOOR</text>
+  <text x="450" y="45" text-anchor="middle" font-size="12.5" fill="#43555F">CEILING (false ceiling)</text>
+
+  <!-- comfort-zone reference lines -->
+  <g stroke="#8f9aa1" stroke-width="1.2" stroke-dasharray="4 4">
+    <line x1="180" y1="407" x2="726" y2="407"/>
+    <line x1="180" y1="279" x2="726" y2="279"/>
+    <line x1="180" y1="201" x2="726" y2="201"/>
+  </g>
+  <g font-size="11" fill="#6B7C86">
+    <rect x="177" y="394" width="95" height="14" fill="#ffffff"/>
+    <text x="180" y="404">ankle · 10 cm</text>
+    <rect x="177" y="266" width="128" height="14" fill="#ffffff"/>
+    <text x="180" y="276">seated head · 110 cm</text>
+    <rect x="177" y="188" width="136" height="14" fill="#ffffff"/>
+    <text x="180" y="198">standing head · 170 cm</text>
+  </g>
+
+  <!-- LEFT WALL: ceiling-mounted split -->
+  <rect x="100" y="58" width="72" height="28" fill="#0E6E7A" fill-opacity="0.18" stroke="#0E6E7A" stroke-width="2"/>
+  <line x1="172" y1="86" x2="330" y2="225" stroke="#0E6E7A" stroke-width="2.2" marker-end="url(#arC)"/>
+  <text x="105" y="115" font-size="12.5" font-weight="700" fill="#0E6E7A">Ceiling-mounted split</text>
+  <text x="105" y="131" font-size="11.5" fill="#0E6E7A">Daikin FTE60U / FTL35U</text>
+  <text x="105" y="147" font-size="11.5" fill="#0E6E7A">mounted ~260–270 cm</text>
+  <text x="105" y="163" font-size="11" fill="#8296A0" font-style="italic">1.8 TR + 1 TR = 2.8 TR</text>
+
+  <!-- RIGHT WALL: floor tower -->
+  <rect x="728" y="180" width="72" height="240" fill="#8F6410" fill-opacity="0.10" stroke="#8F6410" stroke-width="2"/>
+  <rect x="728" y="180" width="72" height="47" fill="#8F6410" fill-opacity="0.30" stroke="#8F6410" stroke-width="2"/>
+  <line x1="728" y1="203" x2="565" y2="196" stroke="#8F6410" stroke-width="2.2" marker-end="url(#arT)"/>
+  <text x="795" y="115" text-anchor="end" font-size="12.5" font-weight="700" fill="#8F6410">Floor-mounted tower</text>
+  <text x="795" y="131" text-anchor="end" font-size="11.5" fill="#8F6410">Daikin FVRN125AXV16</text>
+  <text x="795" y="147" text-anchor="end" font-size="11.5" fill="#8F6410">187 cm tall · vents top 37 cm (150–187 cm)</text>
+  <text x="795" y="163" text-anchor="end" font-size="11" fill="#8f7a4a" font-style="italic">3.8 TR × 2 = 7.6 TR</text>
+
+  <!-- fan -->
+  <line x1="450" y1="60" x2="450" y2="102" stroke="#16202B" stroke-width="1.6"/>
+  <g transform="translate(450,102)">
+    <circle r="15" fill="#fff" stroke="#16202B" stroke-width="2"/>
+    <path d="M0,-15 L0,15 M-15,0 L15,0 M-10.6,-10.6 L10.6,10.6 M-10.6,10.6 L10.6,-10.6" stroke="#16202B" stroke-width="1.1"/>
+  </g>
+  <text x="450" y="140" text-anchor="middle" font-size="12" font-weight="700" fill="#16202B">Fan · blade height 247 cm</text>
+
+  <!-- discharge-height gap callout -->
+  <line x1="815" y1="72" x2="815" y2="203" stroke="#16202B" stroke-width="1.4"/>
+  <line x1="808" y1="72" x2="822" y2="72" stroke="#16202B" stroke-width="1.4"/>
+  <line x1="808" y1="203" x2="822" y2="203" stroke="#16202B" stroke-width="1.4"/>
+  <text x="828" y="140" font-size="11.5" font-weight="700" fill="#16202B" transform="rotate(90 828 140)" text-anchor="middle">~90–115 cm gap</text>
+
+  <text x="450" y="465" text-anchor="middle" font-size="11" fill="#8f9aa1" font-style="italic">Schematic elevation, not to scale horizontally — one generic cross-section of the hall</text>
+</svg>
