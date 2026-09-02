@@ -157,6 +157,13 @@ the easy life.
 
 ### Node #1, confirmed: ESP32-C3 SuperMini + SHT31
 
+**The DS18B20 is not part of node #1.** It's only needed for the later
+*column nodes* — the ones pairing an occupied-zone sensor with a ceiling-level
+one (§4) or an AC supply-air probe (hall-survey.md §5) — because I²C isn't
+reliable over the 2–3 m cable those need, and 1-Wire is. The very first
+build-and-test-it-works node is ESP32-C3 + SHT31 only. Skip DS18B20 until the
+12-node rollout reaches those specific positions.
+
 The pin choices above (GPIO6/GPIO7 for I²C, GPIO4 for 1-Wire) aren't arbitrary
 — they avoid the ESP32-C3's strapping pins (GPIO2, 8, 9, which affect boot
 mode and are best left alone) and match Espressif's own reference pinout, so
